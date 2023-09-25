@@ -1,6 +1,11 @@
-bin
+bin/
 *.json
-env
+env/
 .env
 *.txt
 *.osu
+*.user
+obj/
+.vs/
+*.suo
+*.userprefs
