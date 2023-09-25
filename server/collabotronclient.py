@@ -10,9 +10,15 @@ class CollabotronClient:
     def is_updated(self):
         return self.updated
     
+    def complete_update(self):
+        self.updated = True
+    
     def get_id(self):
         return self.id
     
     def get_token(self):
         return self.auth_token
+    
+    def __eq__(self, __value: object) -> bool:
+        return self.id == __value.id
     
