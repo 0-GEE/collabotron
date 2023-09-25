@@ -1,0 +1,6 @@
+bin
+*.json
+env
+.env
+*.txt
+*.osu
