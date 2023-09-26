@@ -6,4 +6,10 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="EditorReader">
+      <HintPath>..\..\..\EditorReader\EditorReader.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
