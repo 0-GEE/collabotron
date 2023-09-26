@@ -68,7 +68,7 @@ def register():
     if request.form.get("password", "") != AUTH_CODE:
         return {"success": False}
     
-    if not (find_client(session.get("client_id", None)) is None):
+    if find_client(session.get("client_id", None)) is not None:
         return {"success": False} 
     
     new_id = len(app.config['CLIENTS']) - 1
@@ -86,7 +86,7 @@ def register():
 @login_required
 def upload():
     client = find_client(session.get("client_id", None))
-    if (client is None) or ('file' not in request.files):
+    if client is None or 'file' not in request.files:
         abort(400)
 
     if client.get_id() != app.config['CURR_HOST']:
