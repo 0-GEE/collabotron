@@ -10,3 +10,4 @@ obj/
 *.suo
 *.userprefs
 __pycache__/
+*.dll
