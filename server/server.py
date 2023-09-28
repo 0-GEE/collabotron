@@ -60,7 +60,10 @@ def index():
     if client is None:
         abort(400)
 
-    return {"refresh": (not client.is_updated())}
+    return {
+        "refresh": (not client.is_updated()),
+        "is_host": (app.config['CURR_HOST'] == client.get_id())
+        }
     
 
 @app.route("/register", methods=['POST'])
