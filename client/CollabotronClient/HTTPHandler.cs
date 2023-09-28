@@ -9,16 +9,14 @@ namespace CollabotronClient
 {
     class HTTPHandler
     {
-        private string url;
         private string cookies;
 
-        public HTTPHandler(string url)
+        public HTTPHandler()
         {
-            this.url = url;
             cookies = null;
         }
 
-        public async Task<string> Get()
+        public async Task<string> Get(string url)
         {
             using(var client = new HttpClient())
             {
@@ -43,7 +41,7 @@ namespace CollabotronClient
             }
         }
 
-        public async Task<string> Post(Dictionary<string, string> body)
+        public async Task<string> Post(string url, Dictionary<string, string> body = null, string uploadFilePath = null)
         {// TODO
             return "";
         }
