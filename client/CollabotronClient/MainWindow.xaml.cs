@@ -20,9 +20,21 @@ namespace CollabotronClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        private HTTPHandler netHandler;
+        private BeatmapHandler mapHandler;
+        private string ServerUrlBase;
+
         public MainWindow()
         {
+            netHandler = new HTTPHandler();
+            mapHandler = new BeatmapHandler();
+            ServerUrlBase = null;
             InitializeComponent();
+        }
+
+        private void ServerConnectButton_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO
         }
     }
 }

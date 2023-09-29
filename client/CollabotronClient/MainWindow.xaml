@@ -7,6 +7,23 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Label>Server Address/Hostname and Port (i.e. example.com:8080)</Label>
+        <TextBlock Name="ServerDetailsInput" Grid.Column="1" Margin="0,0,0,10" />
+        <Button Name="ServerConnectButton" Click="ServerConnectButton_Click" Grid.Column="0" Margin="0,0,0,20" Grid.Row="2">Connect to Server</Button>
+        <Label Grid.Row="1" Grid.Column="0">Access Code</Label>
+        <TextBlock Name="AccessCodeInput" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10" />
+
 
     </Grid>
 </Window>
