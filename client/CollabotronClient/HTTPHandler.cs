@@ -29,7 +29,7 @@ namespace CollabotronClient
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new HttpRequestException($"HTTP Request Failure. Code {response.StatusCode}");
+                    throw new HttpRequestException($"HTTP Request Failure. Code {response.StatusCode}", new Exception(), response.StatusCode);
                 }
 
                 if (response.Headers.TryGetValues("Set-Cookie", out var newCookies))
@@ -88,7 +88,7 @@ namespace CollabotronClient
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new HttpRequestException($"HTTP Request Failure. Code {response.StatusCode}");
+                    throw new HttpRequestException($"HTTP Request Failure. Code {response.StatusCode}", new Exception(), response.StatusCode);
                 }
 
                 if (response.Headers.TryGetValues("Set-Cookie", out var newCookies))
