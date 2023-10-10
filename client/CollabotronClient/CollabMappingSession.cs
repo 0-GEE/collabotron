@@ -21,6 +21,9 @@ namespace CollabotronClient
 
         private bool isSessionActive;
 
+        public delegate void CollabEventHandler(object sender, CollabEventArgs e);
+        public event CollabEventHandler CollabEvent;
+
         public CollabMappingSession(string serverHost, string serverPort, string accessCode)
         {
             urlBase = $"http://{serverHost}:{serverPort}";
@@ -48,7 +51,7 @@ namespace CollabotronClient
             {
                 if (!result)
                 {
-                    throw new Exception("Could not authenticate successfully (server returned 'false')");
+                    throw new Exception($"Could not authenticate successfully (server returned {result})");
                 }
 
                 isSessionActive = true;
@@ -87,12 +90,54 @@ namespace CollabotronClient
 
         public async void RefreshMapData()
         {
-            // TODO
+            string url = urlBase + refreshPath;
+
+            string beatmapData = await netHandler.Get(url);
+            beatmap.WriteToBeatmap(beatmapData);
         }
 
-        private async void GetStateAsync()
+        public async void BeginGetStateLoop()
         {
-            // TODO
+            while (true)
+            {
+                if (!isSessionActive)
+                {
+                    return;
+                }
+
+                string url = urlBase + statePath;
+
+                var resp = JsonConvert.DeserializeObject<Dictionary<string, bool>>(await netHandler.Get(url));
+
+                if (resp.TryGetValue("is_host", out bool isHost) && resp.TryGetValue("refresh", out bool isRefresh))
+                {
+                    if (isHost != isMapHost || isRefresh)
+                    {
+                        isMapHost = isHost;
+                        OnCollabEvent(isHost, isRefresh);
+                    }
+                }
+                else
+                {
+                    throw new Exception($"Bad state data: {resp}");
+                }
+
+                await Task.Delay(1000);
+            }
+
+            
+            
+        }
+
+        protected virtual void OnCollabEvent(bool isHost, bool isRefresh)
+        {
+            CollabEvent?.Invoke(this, new CollabEventArgs(isHost, isRefresh));
+        }
+
+        public void StopSession()
+        {
+            isSessionActive = false;
+            isMapHost = false;
         }
     }
 }
