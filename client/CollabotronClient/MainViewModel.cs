@@ -4,40 +4,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Prism.Commands;
+using Prism.Mvvm;
 using System.ComponentModel;
+using System.Windows;
 
 namespace CollabotronClient
 {
-    class MainViewModel : INotifyPropertyChanged
+    public class MainViewModel : BindableBase
     {
         private string _serverDetailsInput;
         private string _accessCodeInput;
+        private string _statusMessage;
         private CollabMappingSession session;
 
         public string ServerDetailsInput
         {
             get { return _serverDetailsInput; }
-            set
-            {
-                if (_serverDetailsInput != value)
-                {
-                    _serverDetailsInput = value;
-                    OnPropertyChanged(nameof(ServerDetailsInput));
-                }
-            }
+            set { SetProperty(ref _serverDetailsInput, value); }
         }
 
         public string AccessCodeInput
         {
             get { return _accessCodeInput; }
-            set
-            {
-                if (_accessCodeInput != value)
-                {
-                    _accessCodeInput = value;
-                    OnPropertyChanged(nameof(AccessCodeInput));
-                }
-            }
+            set { SetProperty(ref _accessCodeInput, value); }
+        }
+
+        public string StatusMessage
+        {
+            get { return _statusMessage; }
+            private set { SetProperty(ref _statusMessage, value); }
         }
 
         public DelegateCommand AuthenticationCommmand { get; }
@@ -47,40 +42,99 @@ namespace CollabotronClient
 
         public MainViewModel()
         {
-            AuthenticationCommmand = new DelegateCommand(Authenticate);
-            UploadBeatmapCommand = new DelegateCommand(UploadBeatmap);
-            ManualRefreshCommand = new DelegateCommand(ManualRefresh);
+            AuthenticationCommmand = new DelegateCommand(async () => await AuthenticateAndStart());
+            UploadBeatmapCommand = new DelegateCommand(async () => await UploadBeatmap());
+            ManualRefreshCommand = new DelegateCommand(async () => await ManualRefresh());
             ExitSessionCommand = new DelegateCommand(ExitSession);
+
+            _serverDetailsInput = "";
+            _accessCodeInput = "";
             session = null;
+            _statusMessage = "No active session.";
         }
 
-        private void Authenticate()
+        private async Task AuthenticateAndStart()
         {
-            // TODO
+            if (session != null)
+            {
+                MessageBox.Show("Already in active collab session.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (_serverDetailsInput == "" || _accessCodeInput == "")
+            {
+                MessageBox.Show("Please enter server details and access code first.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string[] serverInfo = _serverDetailsInput.Split(":");
+
+            if (serverInfo.Length != 2)
+            {
+                MessageBox.Show("Invalid server details.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            string serverAddr = serverInfo[0];
+            string serverPort = serverInfo[1];
+
+            session = new CollabMappingSession(serverAddr, serverPort);
+            session.CollabEvent += HandleCollabEvent;
+
+            await session.Authenticate(_accessCodeInput);
+
+            await session.BeginGetStateLoop();
+
+            session = null;
+
+            SetProperty(ref _statusMessage, "No active session.");
+
         }
 
-        private void UploadBeatmap()
+        private async Task UploadBeatmap()
         {
-            // TODO
+            if (session == null)
+            {
+                MessageBox.Show("You need to be in an active collab session to upload collab parts.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            bool res = await session.UploadBeatmap();
+
+            if (res)
+            {
+                MessageBox.Show("Collab part uploaded succesfully.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            else
+            {
+                MessageBox.Show("Collab part upload forbidden by server. Are you sure you are the current host?", "Forbbiden", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void ManualRefresh()
+        private async Task ManualRefresh()
         {
-            // TODO
+            if (session == null)
+            {
+                MessageBox.Show("You need to be in an active collab session to update your map.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            await session.RefreshMapData();
         }
 
         private void ExitSession()
         {
-            // TODO
+            if (session == null)
+            {
+                return;
+            }
+            session.StopSession();
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
+        private void HandleCollabEvent(object sender, CollabEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            StatusMessage = e.IsHost ? "You are now the host!" : "Host is mapping...";
         }
-
 
     }
 }

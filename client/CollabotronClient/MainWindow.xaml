@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:CollabotronClient"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.DataContext>
+        <local:MainViewModel/>
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -19,13 +22,14 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Label>Server Address/Hostname and Port (i.e. example.com:8080)</Label>
-        <TextBlock Name="ServerDetailsInput" Grid.Column="1" Margin="0,0,0,10" />
-        <Button Name="ServerConnectButton" Click="ServerConnectButton_Click" Grid.Column="0" Margin="10,10,10,10" Grid.Row="2">Connect to Server</Button>
+        <TextBox Name="ServerDetailsInput" Grid.Column="1" Margin="0,0,0,10" Text="{Binding ServerDetailsInput}" />
+        <Button Name="ServerConnectButton" Command="{Binding AuthenticationCommmand}" Grid.Column="0" Margin="10,10,10,10" Grid.Row="2">Connect to Server</Button>
         <Label Grid.Row="1" Grid.Column="0">Access Code</Label>
-        <TextBlock Name="AccessCodeInput" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10" />
-        <Button Name="FinishMappingButton" Click="FinishMappingButton_Click" Grid.Column="0" Margin="10,10,10,10" Grid.Row="3">Finish Mapping</Button>
-        <Button Name="RefreshButton" Click="RefreshButton_Click" Grid.Column="1" Margin="10,10,10,10" Grid.Row="3">Refresh Map Data</Button>
-        <Button Name="ExitButton" Click="ExitButton_Click" Grid.Column="2" Margin="10,10,10,10" Grid.Row="3">Stop Session</Button>
+        <TextBox Name="AccessCodeInput" Grid.Column="1" Grid.Row="1" Margin="0,0,0,10" Text="{Binding AccessCodeInput}" />
+        <Button Name="FinishMappingButton" Command="{Binding UploadBeatmapCommand}" Grid.Column="0" Margin="10,10,10,10" Grid.Row="3">Finish Mapping</Button>
+        <Button Name="RefreshButton" Command="{Binding ManualRefreshCommand}" Grid.Column="1" Margin="10,10,10,10" Grid.Row="3">Refresh Map Data</Button>
+        <Button Name="ExitButton" Command="{Binding ExitSessionCommand}" Grid.Column="2" Margin="10,10,10,10" Grid.Row="3">Stop Session</Button>
+        <TextBlock Name="StatusMsg" Text="{Binding StatusMessage}" Grid.Column="1" Grid.Row="2" Margin="10,10,10,10"/>
 
 
     </Grid>

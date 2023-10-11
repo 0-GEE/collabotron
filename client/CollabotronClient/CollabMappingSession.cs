@@ -24,7 +24,7 @@ namespace CollabotronClient
         public delegate void CollabEventHandler(object sender, CollabEventArgs e);
         public event CollabEventHandler CollabEvent;
 
-        public CollabMappingSession(string serverHost, string serverPort, string accessCode)
+        public CollabMappingSession(string serverHost, string serverPort)
         {
             urlBase = $"http://{serverHost}:{serverPort}";
             netHandler = new HTTPHandler();
@@ -32,11 +32,9 @@ namespace CollabotronClient
             beatmap.ReadEditor();
             isMapHost = false;
             isSessionActive = false;
-
-            Authenticate(accessCode);
         }
 
-        public async void Authenticate(string accessCode)
+        public async Task Authenticate(string accessCode)
         {
             var requestBody = new List<KeyValuePair<string, string>>
             {
@@ -88,7 +86,7 @@ namespace CollabotronClient
             throw new Exception("Could not find upload result bool in server response.");
         }
 
-        public async void RefreshMapData()
+        public async Task RefreshMapData()
         {
             string url = urlBase + refreshPath;
 
@@ -96,7 +94,7 @@ namespace CollabotronClient
             beatmap.WriteToBeatmap(beatmapData);
         }
 
-        public async void BeginGetStateLoop()
+        public async Task BeginGetStateLoop()
         {
             while (true)
             {
