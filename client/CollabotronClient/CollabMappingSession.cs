@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.IO;
 
 namespace CollabotronClient
 {
@@ -29,13 +30,26 @@ namespace CollabotronClient
             urlBase = $"http://{serverHost}:{serverPort}";
             netHandler = new HTTPHandler();
             beatmap = new BeatmapHandler();
-            beatmap.ReadEditor();
             isMapHost = false;
             isSessionActive = false;
+
+            try
+            {
+                var config = GetConfig();
+
+                if (config.TryGetValue("songs_folder", out string songsFolder))
+                {
+                    beatmap.SetSongsFolder(songsFolder);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+            }
         }
 
         public async Task Authenticate(string accessCode)
         {
+            beatmap.ReadEditor();
             var requestBody = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("password", accessCode)
@@ -125,6 +139,41 @@ namespace CollabotronClient
 
             
             
+        }
+
+        public bool IsReady()
+        {
+            return beatmap.IsSongsFolderSet();
+        }
+
+        public void SetSongsFolder(string path)
+        {
+            beatmap.SetSongsFolder(path);
+
+            Dictionary<string, string> config;
+            try
+            {
+                config = GetConfig();
+            }
+            catch (FileNotFoundException)
+            {
+                config = new Dictionary<string, string>();
+            }
+
+            config.Add("songs_folder", path);
+            SaveConfig(config);
+        }
+
+        private Dictionary<string, string> GetConfig()
+        {
+            var configContents = File.ReadAllText("config.json");
+            return JsonConvert.DeserializeObject<Dictionary<string, string>>(configContents);
+        }
+
+        private void SaveConfig(Dictionary<string, string> config)
+        {
+            var configContents = JsonConvert.SerializeObject(config);
+            File.WriteAllText("config.json", configContents);
         }
 
         protected virtual void OnCollabEvent(bool isHost, bool isRefresh)

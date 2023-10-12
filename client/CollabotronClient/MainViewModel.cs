@@ -79,6 +79,16 @@ namespace CollabotronClient
             string serverPort = serverInfo[1];
 
             session = new CollabMappingSession(serverAddr, serverPort);
+
+            if (!session.IsReady())
+            {
+                if (!ShowSongsFolderPopup())
+                {
+                    MessageBox.Show("You must enter a valid path to your osu! songs folder before continuing.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    session = null;
+                    return;
+                }
+            }
             session.CollabEvent += HandleCollabEvent;
 
             await session.Authenticate(_accessCodeInput);
@@ -129,6 +139,24 @@ namespace CollabotronClient
                 return;
             }
             session.StopSession();
+        }
+
+        private bool ShowSongsFolderPopup()
+        {
+            var popup = new SongsFolderWindow();
+            if (popup.ShowDialog() == true)
+            {
+                var input = popup.UserInput;
+                if (input.Length == 0)
+                {
+                    return false;
+                }
+
+                session.SetSongsFolder(input);
+                return true;
+            }
+
+            return false;
         }
 
         private void HandleCollabEvent(object sender, CollabEventArgs e)

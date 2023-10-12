@@ -1,0 +1,20 @@
+﻿<Window x:Class="CollabotronClient.SongsFolderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CollabotronClient"
+        mc:Ignorable="d"
+        Title="SongsFolderWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Label Name="SongsFolderLabel" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0">No preset songs folder detected. Please enter the FULL path to your osu! songs folder and click 'Submit'.</Label>
+        <TextBox Name="SongsFolderInput" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1"/>
+        <Button Name="SubmitSongsFolderBtn" Content="Submit" Width="100" Height="50" VerticalAlignment="Center" HorizontalAlignment="Center" Click="SubmitSongsFolderBtn_Click" Grid.Row="2"/>
+    </Grid>
+</Window>
