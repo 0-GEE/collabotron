@@ -11,9 +11,7 @@ sending the file to them, and them having to place it in their beatmap directori
 
 ## For Users
 Unfortunately, getting the whole Collabotron system up and running isn't the most friendly towards those who 
-do not have experience with web technologies. To set it all up you'll first need to spin up the server which can 
-be achieved using any web server software which supports WSGI along with a machine with open ports (VPS or PC 
-with port forwarding work). Alternatively, you can run the Flask development server directly without caring about
+do not have experience with web technologies. To set it all up you'll first need to spin up the server by downloading all files in the ``server`` directory onto a machine with ports open to the internet, installing dependencies (I promise I will make a requirements.txt soon) and deploying using web server software suite of your choice. Alternatively, you can run the Flask development server directly without caring about
 setting up an actual production server (although I feel legally required to inform you that this may not be a good idea).
 
 As for starting up the client, it's as simple as double-clicking the executable. Just make sure you have the
