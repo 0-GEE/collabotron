@@ -1,4 +1,9 @@
 class CollabotronClient:
+    """
+    This class serves as an internal representation
+     of a client. It is obviously not the actual
+     client itself.
+    """
     def __init__(self, id, token) -> None:
         self.id = id
         self.auth_token = token
