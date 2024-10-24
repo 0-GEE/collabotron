@@ -2,7 +2,6 @@ bin/
 *.json
 env/
 .env
-*.txt
 *.osu
 *.user
 obj/
